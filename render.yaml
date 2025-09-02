@@ -1,0 +1,32 @@
+services:
+  # A Docker web service
+  - type: web
+    name: changingweather
+    runtime: docker
+    plan: free
+    # Trigger a deploy only if the linked branch's CI checks pass
+    autoDeployTrigger: checksPass
+    # Web services only. The path of the service's health check endpoint for zero-downtime deploys.
+    healthCheckPath: /v1/ping
+    # The command to run when starting the Docker-based service.
+    dockerCommand: gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    # The path to the service's Dockerfile, relative to the repo root. Typically used for services in a monorepo.
+    dockerfilePath: ./backend/Dockerfile
+    # The path to the service's Docker build context, relative to the repo root. Typically used for services in a monorepo.
+    dockerContext: ./backend
+
+    # Environment variables for the application
+    envVars:
+      - key: PORT
+        value: '10000'
+      # PostgreSQL service
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: changingweatherdb
+          property: connectionString
+databases:
+  - name: changingweatherdb
+    plan: free
+    postgresMajorVersion: '15'
+    ipAllowList: [] # Only allow internal connections
+    user: app_user
