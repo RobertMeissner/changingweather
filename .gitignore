@@ -52,9 +52,12 @@ cookiecutter-pypackage-env/
 
 # IDE settings
 .vscode/
-.claude/
 backend/.venv
 
 *.egg-info/
 build/
 dist/
+
+# Claude context
+.claude/
+SESSION_SUMMARY.md

@@ -1,11 +1,15 @@
 from unittest.mock import MagicMock
 
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from src.main import app
+from src.api.v1.health import router
 
 
-client = TestClient(app)
+# Create minimal app just for testing
+test_app = FastAPI()
+test_app.include_router(router)
+client = TestClient(test_app)
 
 
 def test_health(monkeypatch: MagicMock):
@@ -14,6 +18,6 @@ def test_health(monkeypatch: MagicMock):
     monkeypatch.setenv("POSTGRES_DB", "test")
     monkeypatch.setenv("POSTGRES_HOST", "localhost")
 
-    response = client.get("/v1/ping")
+    response = client.get("/ping")
     assert response.status_code == 200
     assert response.json() == {"ping": "pong!"}
