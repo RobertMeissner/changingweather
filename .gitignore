@@ -54,3 +54,7 @@ cookiecutter-pypackage-env/
 .vscode/
 .claude/
 backend/.venv
+
+*.egg-info/
+build/
+dist/

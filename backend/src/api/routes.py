@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from fastapi.responses import PlainTextResponse, Response
 
-from src.api.v1 import health
+from src.api.v1 import health, weather
 
 
 home_router = APIRouter()
@@ -14,3 +14,4 @@ def home() -> Response:
 
 api_router = APIRouter()
 api_router.include_router(health.router)
+api_router.include_router(weather.router)

@@ -1,0 +1,19 @@
+meta {
+  name: Get
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8666/v1/weather/1/1
+  body: none
+  auth: inherit
+}
+
+headers {
+  accept: application/json
+}
+
+settings {
+  encodeUrl: false
+}
