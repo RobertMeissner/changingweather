@@ -1,22 +1,36 @@
-from datetime import datetime, timedelta
-
-from src.domain.entities.weather import WeatherCoordinate, WeatherData
-from src.domain.ports.weather_port import WeatherPort
+from src.domain.entities.weather import WeatherData, WeatherQueryOptions
+from src.domain.ports.weather_api_port import WeatherApiPort
+from src.domain.ports.weather_command_port import WeatherCommandPort
+from src.domain.ports.weather_query_port import WeatherQueryPort
 
 
 class WeatherService:
-    def __init__(self, weather_adapter: WeatherPort):
-        self._weather_adapter = weather_adapter
+    """
+
+    Manager, pulling it all together
+    """
+
+    def __init__(
+        self,
+        query_port: WeatherQueryPort,
+        command_port: WeatherCommandPort,
+        api_port: WeatherApiPort,
+    ):
+        self._query_port = query_port
+        self._command_port = command_port
+        self._api_port = api_port
 
     def weather_for_location(
         self,
-        coordinate: WeatherCoordinate,
-        start: datetime | None = None,
-        end: datetime | None = None,
+        options: WeatherQueryOptions,
     ) -> WeatherData:
-        if start is None:
-            start = datetime.now() - timedelta(days=7)
-        if end is None:
-            end = datetime.now()
         # TODO: Check whether coordinates are in database
-        return self._weather_adapter.pulled_data(coordinate, start, end)
+        #  Otherwise -> query API -> store data in db for future caching
+        cached = self._query_port.get(options)
+        if cached.data:
+            return cached
+
+        weather_data = self._api_port.get(options)
+
+        self._command_port.cache(weather_data)
+        return weather_data

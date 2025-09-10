@@ -9,6 +9,10 @@ down:
 	@echo "bringing down project...."
 	docker compose down
 
+build:
+	@echo "building without cache"
+	docker compose build --no-cache backend fer
+
 bash:
 	@echo "connecting to container...."
 	docker compose exec backend bash

@@ -1,0 +1,16 @@
+from typing import Protocol
+
+import pandas as pd
+
+from src.domain.entities.weather import WeatherData, WeatherQueryOptions
+
+
+class WeatherApiPort(Protocol):
+    """
+
+    Implements external API
+    """
+
+    def fetch(self, options: WeatherQueryOptions) -> pd.DataFrame: ...
+    def map(self, data: pd.DataFrame, options: WeatherQueryOptions) -> WeatherData: ...
+    def get(self, options: WeatherQueryOptions) -> WeatherData: ...

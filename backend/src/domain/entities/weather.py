@@ -16,5 +16,13 @@ class WeatherDataPoint:
 
 @dataclass
 class WeatherData:
+    # Todo: coordinate as part of WeatherData when persisting
     coordinate: WeatherCoordinate
     data: list[WeatherDataPoint]
+
+
+@dataclass
+class WeatherQueryOptions:
+    coordinate: WeatherCoordinate
+    start: datetime
+    end: datetime

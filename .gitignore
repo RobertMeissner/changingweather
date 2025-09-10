@@ -61,3 +61,8 @@ dist/
 # Claude context
 .claude/
 SESSION_SUMMARY.md
+
+.cache.sqlite
+*.cache.sqlite
+# or more broadly
+*.sqlite

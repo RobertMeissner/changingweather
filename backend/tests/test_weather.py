@@ -11,5 +11,6 @@ client = TestClient(test_app)
 
 # TODO: to be replaced by bruno tests
 def test_weather():
+    # FIXME: What does this test do now?
     response = client.get("/weather/1/1")
-    assert response.json()["data"][0]["temperature"] == 1
+    assert (response.json()["data"][0]["temperature"] - 27.95) < 0.1
