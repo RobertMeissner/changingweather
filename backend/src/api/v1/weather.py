@@ -20,10 +20,10 @@ def weather(
     lat: float = Path(..., ge=-90, le=90, description="Latitude"),
     lon: float = Path(..., ge=-180, le=180, description="Longitude"),
     start: Optional[datetime.datetime] = Query(
-        datetime.datetime(2020, 1, 1), description="Start date (YYYY-MM-DD)"
+        datetime.date(2020, 1, 1), description="Start date (YYYY-MM-DD)"
     ),
     end: Optional[datetime.datetime] = Query(
-        datetime.datetime(2020, 1, 2), description="End date (YYYY-MM-DD)"
+        datetime.date(2020, 1, 2), description="End date (YYYY-MM-DD)"
     ),
     service: WeatherService = Depends(weather_service),
 ) -> WeatherResponse:

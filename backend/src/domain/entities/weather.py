@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 
 
 @dataclass
@@ -24,5 +24,5 @@ class WeatherData:
 @dataclass
 class WeatherQueryOptions:
     coordinate: WeatherCoordinate
-    start: datetime
-    end: datetime
+    start: date
+    end: date
