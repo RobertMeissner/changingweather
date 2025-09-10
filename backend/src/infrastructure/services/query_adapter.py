@@ -38,3 +38,9 @@ class QueryAdapter:
         lon = round(options.coordinate.longitude, 2)
         date_range = f"{options.start}:{options.end}"
         return f"{lat}:{lon}:{date_range}"
+
+    def _serialize(self, options: WeatherData) -> str:
+        return ""
+
+    def cache(self, data: WeatherData, options: WeatherQueryOptions) -> None:
+        self._redis.set(self._cache_key(options), self._serialize(data))

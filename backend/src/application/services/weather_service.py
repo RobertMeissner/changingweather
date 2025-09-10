@@ -33,4 +33,5 @@ class WeatherService:
         weather_data = self._api_port.get(options)
 
         self._command_port.cache(weather_data)
+        self._query_port.cache(weather_data, options)
         return weather_data
