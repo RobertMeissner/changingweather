@@ -1,4 +1,5 @@
 import os
+from datetime import date
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -37,24 +38,43 @@ lon = st.sidebar.number_input(
     format="%.4f",
 )
 
+# Date range inputs
+st.sidebar.header("Date Range")
+
+start_date = st.sidebar.date_input(
+    "Start Date", value=date(2020, 1, 1), min_value=date(1900, 1, 1), max_value=date.today()
+)
+
+end_date = st.sidebar.date_input(
+    "End Date", value=date(2020, 1, 2), min_value=date(1900, 1, 1), max_value=date.today()
+)
+
+# Validate date range
+if start_date > end_date:
+    st.sidebar.error("Start date must be before end date")
 
 # Fetch data button
-if st.sidebar.button("Fetch Weather Data", type="primary"):
+if st.sidebar.button("Fetch Weather Data", type="primary") and start_date <= end_date:
     try:
         # Make API call
         url = f"{API_BASE_URL}/v1/weather/{lat}/{lon}"
+        start_str = start_date.isoformat()
+        end_str = end_date.isoformat()
+        params = {"start": start_str, "end": end_str}
 
         with st.spinner("Fetching weather data..."):
-            response = requests.get(url, timeout=10)
+            response = requests.get(url, params=params, timeout=10)
 
-        print(response)
         if response.status_code == 200:
             data = response.json()
 
             # Store in session state
             st.session_state.weather_data = data["data"]
             st.session_state.current_coords = (lat, lon)
-            st.success(f"Data fetched successfully for coordinates ({lat}, {lon})")
+            st.session_state.date_range = (start_date, end_date)
+            st.success(
+                f"Data fetched successfully for coordinates ({lat}, {lon}) from {start_date} to {end_date}"
+            )
 
         else:
             st.error(f"API Error: {response.status_code} - {response.text}")
@@ -70,9 +90,10 @@ if st.sidebar.button("Fetch Weather Data", type="primary"):
 # Display data if available
 if "weather_data" in st.session_state:
     coords = st.session_state.current_coords
+    date_range = st.session_state.get("date_range", ("N/A", "N/A"))
 
     # Coordinates label above graph
-    st.subheader(f"Weather Data for Coordinates: {coords[0]}, {coords[1]}")
+    st.subheader(f"Weather Data: {coords[0]}, {coords[1]} ({date_range[0]} to {date_range[1]})")
 
     try:
         # Convert to DataFrame (adjust based on your API response structure)

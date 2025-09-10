@@ -1,7 +1,8 @@
 import datetime
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Query
 
 from src.application.services.weather_service import WeatherService
 from src.domain.entities.weather import WeatherCoordinate, WeatherQueryOptions
@@ -18,13 +19,19 @@ logger = logging.getLogger(__name__)
 def weather(
     lat: float = Path(..., ge=-90, le=90, description="Latitude"),
     lon: float = Path(..., ge=-180, le=180, description="Longitude"),
+    start: Optional[datetime.datetime] = Query(
+        datetime.datetime(2020, 1, 1), description="Start date (YYYY-MM-DD)"
+    ),
+    end: Optional[datetime.datetime] = Query(
+        datetime.datetime(2020, 1, 2), description="End date (YYYY-MM-DD)"
+    ),
     service: WeatherService = Depends(weather_service),
 ) -> WeatherResponse:
     # TODO: Naming, in = query, out = response
     options = WeatherQueryOptions(
         coordinate=WeatherCoordinate(latitude=lat, longitude=lon),
-        start=datetime.datetime(2020, 1, 1),
-        end=datetime.datetime(2020, 1, 2),
+        start=start,
+        end=end,
     )
     weather_data = service.weather_for_location(options)
     logger.debug(f"weather_data: {weather_data}")
