@@ -6,12 +6,18 @@
 </p>
 
 
-# changingweather
+# Changing Weather
+
+How did the weather change at your place? See for yourself with "Changing Weather".
+
+Currently WIP. Everything may break.
+
+
 
 ## Usage
-1. `make up`
-2. visit `http://localhost:8666/v1/ping` for uvicorn server
-3. Backend, JSON based web API based on OpenAPI: `http://localhost/v1/`
+1. `make up-dev`
+2. visit `http://localhost:8501/` for streamlit dashboard. Enter GPS coordinates and obtain data from OpenMeteo
+3. visit `http://localhost:8666/v1/ping` for uvicorn server
 4. Automatic interactive documentation with Swagger UI (from the OpenAPI backend): `http://localhost/docs`
 
 ## Backend local development, additional details
