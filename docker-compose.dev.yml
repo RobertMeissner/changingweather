@@ -1,3 +1,6 @@
+volumes:
+  redisinsight:
+  pgadmin-data:
 
 services:
   streamlit:
@@ -9,3 +12,23 @@ services:
       - backend
     environment:
       - API_BASE_URL=http://backend:8000
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight:/db
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db

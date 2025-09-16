@@ -2,7 +2,6 @@ volumes:
   base-data:
   db-data:
   redis-data:
-  redisinsight:
 
 services:
   db:
@@ -28,7 +27,7 @@ services:
       context: ./backend
       dockerfile: ./Dockerfile
       args:
-        env: ${ENV}
+        en/clv: ${ENV}
     ports:
       - "8666:8000"
     command: |
@@ -55,10 +54,3 @@ services:
       - "6380:6379"
     volumes:
       - redis-data:/data
-
-  redisinsight:
-    image: redislabs/redisinsight:latest
-    ports:
-      - "5540:5540"
-    volumes:
-      - redisinsight:/db
