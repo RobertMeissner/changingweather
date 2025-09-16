@@ -1,14 +1,12 @@
 import json
 from datetime import datetime
 
-import pandas as pd
-import redis
-
 from src.domain.entities.weather import (
     WeatherData,
     WeatherDataPoint,
     WeatherQueryOptions,
 )
+from src.domain.ports.cache_port import CachePort
 
 
 class QueryAdapter:
@@ -17,12 +15,9 @@ class QueryAdapter:
     Implements WeatherQueryPort
     """
 
-    def __init__(self, redis_client: redis.Redis):
-        self._redis = redis_client
-        self._cache_ttl = 1800
-
-    def fetch(self, options: WeatherQueryOptions) -> pd.DataFrame:
-        return pd.DataFrame()
+    def __init__(self, cache: CachePort):
+        self._cache = cache
+        self._cache_ttl = 86_400  # weather data is valid at least one day
 
     @staticmethod
     def map_to_model(data: list[WeatherDataPoint], options: WeatherQueryOptions) -> WeatherData:
@@ -31,17 +26,14 @@ class QueryAdapter:
     def get(self, options: WeatherQueryOptions) -> WeatherData:
         cache_key = self._cache_key(options)
 
-        try:
-            cached_data = self._redis.get(cache_key)
-            if cached_data:
-                return self.map_to_model(
-                    data=self._deserialize(cached_data.decode("utf-8"), options.coordinate),
-                    options=options,
-                )
-        except redis.RedisError:
-            pass
+        cached_data = self._cache.get(cache_key)
+        if cached_data:
+            return self.map_to_model(
+                data=self._deserialize(cached_data),
+                options=options,
+            )
 
-        return self.map_to_model(pd.DataFrame(), options)
+        return self.map_to_model([], options)
 
     @staticmethod
     def _cache_key(options: WeatherQueryOptions) -> str:
@@ -71,5 +63,4 @@ class QueryAdapter:
         )
 
     def cache(self, data: WeatherData, options: WeatherQueryOptions) -> None:
-        raise NotImplementedError()
-        self._redis.set(self._cache_key(options), self._serialize(data))
+        self._cache.set(self._cache_key(options), self._serialize(data), self._cache_ttl)

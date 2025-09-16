@@ -1,9 +1,11 @@
 from typing import Protocol
 
-import pandas as pd
-import redis
-
-from src.domain.entities.weather import WeatherData, WeatherQueryOptions
+from src.domain.entities.weather import (
+    WeatherData,
+    WeatherDataPoint,
+    WeatherQueryOptions,
+)
+from src.domain.ports.cache_port import CachePort
 
 
 class WeatherQueryPort(Protocol):
@@ -13,11 +15,11 @@ class WeatherQueryPort(Protocol):
     Responsible to map repository model to API output model/read model WeatherData
     """
 
-    def __init__(self, redis_client: redis.Redis): ...
+    def __init__(self, cache: CachePort): ...
 
-    def fetch(self, options: WeatherQueryOptions) -> pd.DataFrame: ...
-
-    def map(self, data: pd.DataFrame, options: WeatherQueryOptions) -> WeatherData: ...
+    def map_to_model(
+        self, data: list[WeatherDataPoint], options: WeatherQueryOptions
+    ) -> WeatherData: ...
 
     def get(self, options: WeatherQueryOptions) -> WeatherData: ...
 
