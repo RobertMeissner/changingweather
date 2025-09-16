@@ -35,11 +35,11 @@ class TestQueryAdapter:
         [
             ("[]", []),
             (
-                '[{"temperature": 273.15, "timestamp": 1577833200.0}]',
+                '[{"temperature": 273.15, "timestamp": 1577836800.0}]',
                 [WeatherDataPoint(temperature=273.15, timestamp=datetime.datetime(2020, 1, 1))],
             ),
             (
-                '[{"temperature": 273.15, "timestamp": 1577833200.0}, {"temperature": 274.15, "timestamp": 1609455600.0}]',
+                '[{"temperature": 273.15, "timestamp": 1577836800.0}, {"temperature": 274.15, "timestamp": 1609459200.0}]',
                 [
                     WeatherDataPoint(temperature=273.15, timestamp=datetime.datetime(2020, 1, 1)),
                     WeatherDataPoint(temperature=274.15, timestamp=datetime.datetime(2021, 1, 1)),
@@ -56,14 +56,14 @@ class TestQueryAdapter:
             ([], "[]"),
             (
                 [WeatherDataPoint(temperature=273.15, timestamp=datetime.datetime(2020, 1, 1))],
-                '[{"temperature": 273.15, "timestamp": 1577833200.0}]',
+                '[{"temperature": 273.15, "timestamp": 1577836800.0}]',
             ),
             (
                 [
                     WeatherDataPoint(temperature=273.15, timestamp=datetime.datetime(2020, 1, 1)),
                     WeatherDataPoint(temperature=274.15, timestamp=datetime.datetime(2021, 1, 1)),
                 ],
-                '[{"temperature": 273.15, "timestamp": 1577833200.0}, {"temperature": 274.15, "timestamp": 1609455600.0}]',
+                '[{"temperature": 273.15, "timestamp": 1577836800.0}, {"temperature": 274.15, "timestamp": 1609459200.0}]',
             ),
         ],
     )
@@ -128,7 +128,14 @@ class TestQueryAdapter:
         )
 
         test_timestamp = datetime.datetime(2020, 1, 1, 12, 0)
-        cached_data = json.dumps([{"temperature": 25.5, "timestamp": test_timestamp.timestamp()}])
+        cached_data = json.dumps(
+            [
+                {
+                    "temperature": 25.5,
+                    "timestamp": test_timestamp.replace(tzinfo=datetime.timezone.utc).timestamp(),
+                }
+            ]
+        )
 
         cache_key = adapter._cache_key(options)
         mock_cache.set(cache_key, cached_data)

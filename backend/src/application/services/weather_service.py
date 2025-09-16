@@ -32,6 +32,8 @@ class WeatherService:
 
         weather_data = self._api_port.get(options)
 
+        # FIXME, TODO
         self._command_port.cache(weather_data)
+        # raise NotImplementedError("command port")
         self._query_port.cache(weather_data, options)
         return weather_data

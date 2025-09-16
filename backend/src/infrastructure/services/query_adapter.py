@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.domain.entities.weather import (
     WeatherData,
@@ -48,7 +48,9 @@ class QueryAdapter:
         return [
             WeatherDataPoint(
                 temperature=point["temperature"],
-                timestamp=datetime.fromtimestamp(point["timestamp"]),
+                timestamp=datetime.fromtimestamp(point["timestamp"], tz=timezone.utc).replace(
+                    tzinfo=None
+                ),
             )
             for point in data_points
         ]
@@ -57,7 +59,10 @@ class QueryAdapter:
     def _serialize(data: WeatherData) -> str:
         return json.dumps(
             [
-                {"temperature": point.temperature, "timestamp": point.timestamp.timestamp()}
+                {
+                    "temperature": point.temperature,
+                    "timestamp": point.timestamp.replace(tzinfo=timezone.utc).timestamp(),
+                }
                 for point in data.data
             ]
         )
