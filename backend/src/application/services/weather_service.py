@@ -24,16 +24,15 @@ class WeatherService:
         self,
         options: WeatherQueryOptions,
     ) -> WeatherData:
-        # TODO: Check whether coordinates are in database
-        #  Otherwise -> query API -> store data in db for future caching
         cached = self._query_port.get(options)
         if cached.data:
             return cached
 
         weather_data = self._api_port.get(options)
 
-        # FIXME, TODO
         self._command_port.cache(weather_data)
-        # raise NotImplementedError("command port")
+
+        # Cache for quick access
         self._query_port.cache(weather_data, options)
+
         return weather_data

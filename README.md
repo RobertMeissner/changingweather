@@ -67,3 +67,13 @@ This project uses a Render blueprint to automatically deploy to Render.
 Once you commit your project to GitHub, view [Render docs](https://render.com/docs/infrastructure-as-code#setup) on how to link the `render` blueprint to your project.
 
 More detailed instructions can be found in the [docs](https://cookiecutter-fastapi-backend.readthedocs.io/en/latest/project_features/deployments/render.html).
+
+## Tooling
+
+### endpoints
+
+[Serena](http://127.0.0.1:24282/dashboard/index.html)
+
+[pgAdmin](http://127.0.0.1:5050/browser/)
+
+[redisinsight](http://localhost:5540/)
