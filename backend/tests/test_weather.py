@@ -4,16 +4,16 @@ from fastapi.testclient import TestClient
 from src.api.v1.weather import router
 from src.application.services.weather_service import WeatherService
 from src.infrastructure.di.weather_container import weather_service
-from src.infrastructure.services.command_adapter import CommandAdapter
 from src.infrastructure.services.open_meteo import OpenMeteoAdapter
 from src.infrastructure.services.query_adapter import QueryAdapter
 from tests.mocks.mock_cache import MockCache
+from tests.mocks.mock_command_adapter import MockCommandAdapter
 
 
 def mock_weather_service() -> WeatherService:
     mock_cache = MockCache()
     query_adapter = QueryAdapter(cache=mock_cache)
-    command_adapter = CommandAdapter()
+    command_adapter = MockCommandAdapter()
     api_adapter = OpenMeteoAdapter()
 
     return WeatherService(

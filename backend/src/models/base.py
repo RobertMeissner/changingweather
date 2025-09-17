@@ -1,5 +1,5 @@
 import uuid as uuid_pkg
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import text
@@ -39,7 +39,7 @@ class BaseModel(SQLModel):
         )
     )
     updated_at: Optional[datetime] = Field(
-        default_factory=datetime.now(datetime.UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(
             DateTime(timezone=True),
             onupdate=utcnow(),
